@@ -2,8 +2,11 @@ import Backend from "i18next-fs-backend";
 import { resolve } from "node:path";
 import { RemixI18Next } from "remix-i18next";
 import i18n from "./config"; // your i18n configuration file
+import type { EntryContext } from "@remix-run/node";
+import { createInstance } from "i18next";
+import { initReactI18next } from "react-i18next";
 
-let i18next = new RemixI18Next({
+let i18nextServer = new RemixI18Next({
   detection: {
     supportedLanguages: i18n.supportedLngs,
     fallbackLanguage: i18n.fallbackLng,
@@ -22,4 +25,28 @@ let i18next = new RemixI18Next({
   backend: Backend,
 });
 
-export default i18next;
+
+export async function createI18nextServerInstance(
+  request: Request,
+  remixContext: EntryContext
+) {
+  // Create a new instance of i18next so every request will have a
+  // completely unique instance and not share any state
+  const instance = createInstance();
+
+  await instance
+      .use(initReactI18next) // Tell our instance to use react-i18next
+      .use(Backend) // Setup our backend
+      .init({
+          ...i18n, // spread the configuration
+          lng: await i18nextServer.getLocale(request), // detect locale from the request
+          ns: i18nextServer.getRouteNamespaces(remixContext), // detect what namespaces the routes about to render want to use
+          backend: {
+              loadPath: resolve("./public/locales/{{lng}}/{{ns}}.json"),
+          },
+      });
+
+  return instance;
+}
+
+export default i18nextServer;

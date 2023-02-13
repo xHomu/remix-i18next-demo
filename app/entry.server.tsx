@@ -4,12 +4,8 @@ import { Response } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
 import isbot from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
-import { createInstance } from "i18next";
-import i18next from "./i18n/i18next.server";
-import { I18nextProvider, initReactI18next } from "react-i18next";
-import Backend from "i18next-fs-backend";
-import i18n from "./i18n/config"; // your i18n configuration file
-import { resolve } from "node:path";
+import { createI18nextServerInstance } from "./i18n/i18next.server";
+import { I18nextProvider } from "react-i18next";
 
 const ABORT_DELAY = 5000;
 
@@ -23,22 +19,12 @@ export default async function handleRequest(
     ? "onAllReady"
     : "onShellReady";
 
-  let instance = createInstance();
-  let lng = await i18next.getLocale(request);
-  let ns = i18next.getRouteNamespaces(remixContext);
-
-  await instance
-    .use(initReactI18next) // Tell our instance to use react-i18next
-    .use(Backend) // Setup our backend
-    .init({
-      ...i18n, // spread the configuration
-      lng, // The locale we detected above
-      ns, // The namespaces the routes about to render wants to use
-      backend: { loadPath: resolve("./public/locales/{{lng}}/{{ns}}.json") },
-    });
-
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     let didError = false;
+
+    // First, we create a new instance of i18next so every request will have a
+    // completely unique instance and not share any state
+    const instance = await createI18nextServerInstance(request, remixContext);
 
     let { pipe, abort } = renderToPipeableStream(
       <I18nextProvider i18n={instance}>
