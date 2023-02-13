@@ -6,7 +6,7 @@ import type { EntryContext } from "@remix-run/node";
 import { createInstance } from "i18next";
 import { initReactI18next } from "react-i18next";
 
-let i18nextServer = new RemixI18Next({
+export const i18nextServer = new RemixI18Next({
   detection: {
     supportedLanguages: config.supportedLngs,
     fallbackLanguage: config.fallbackLng,
