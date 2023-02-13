@@ -16,7 +16,7 @@ export const i18nextServer = new RemixI18Next({
   i18next: {
     ...config,
     backend: {
-      loadPath: resolve("./public/src/locales/{{lng}}/{{ns}}.json"),
+      loadPath: resolve("./public/locales/{{lng}}/{{ns}}.json"),
     },
   },
   // The backend you want to use to load the translations
@@ -42,7 +42,7 @@ export async function createI18nextServerInstance(
           lng: await i18nextServer.getLocale(request), // detect locale from the request
           ns: i18nextServer.getRouteNamespaces(remixContext), // detect what namespaces the routes about to render want to use
           backend: {
-              loadPath: resolve("./public/src/locales/{{lng}}/{{ns}}.json"),
+              loadPath: resolve("./public/locales/{{lng}}/{{ns}}.json"),
           },
       });
 
