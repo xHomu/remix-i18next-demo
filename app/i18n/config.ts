@@ -1,4 +1,4 @@
-export default {
+export const config = {
     // This is the list of languages your application supports
     supportedLngs: ["en", "es"],
     // This is the language you want to use in case
@@ -9,3 +9,6 @@ export default {
     // Disabling suspense is recommended
     react: { useSuspense: false },
   };
+
+  
+export default config
