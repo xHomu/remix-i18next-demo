@@ -1,4 +1,4 @@
-import i18n from "~/i18n/config";
+import config from "~/i18n/config";
 import i18next from "i18next";
 import {  initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
@@ -12,7 +12,7 @@ export async function initI18nextClient(hydrate: IdleRequestCallback) {
       .use(LanguageDetector) // Setup a client-side language detector
       .use(Backend) // Setup your backend
       .init({
-        ...i18n, // spread the configuration
+        ...config, // spread the configuration
         // This function detects the namespaces your routes rendered while SSR use
         ns: getInitialNamespaces(),
         backend: { loadPath: "/locales/{{lng}}/{{ns}}.json" },

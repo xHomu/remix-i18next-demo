@@ -1,20 +1,20 @@
 import Backend from "i18next-fs-backend";
 import { resolve } from "node:path";
 import { RemixI18Next } from "remix-i18next";
-import i18n from "./config"; // your i18n configuration file
+import config from "./config"; // your i18n configuration file
 import type { EntryContext } from "@remix-run/node";
 import { createInstance } from "i18next";
 import { initReactI18next } from "react-i18next";
 
 let i18nextServer = new RemixI18Next({
   detection: {
-    supportedLanguages: i18n.supportedLngs,
-    fallbackLanguage: i18n.fallbackLng,
+    supportedLanguages: config.supportedLngs,
+    fallbackLanguage: config.fallbackLng,
   },
   // This is the configuration for i18next used
   // when translating messages server-side only
   i18next: {
-    ...i18n,
+    ...config,
     backend: {
       loadPath: resolve("./public/locales/{{lng}}/{{ns}}.json"),
     },
@@ -38,7 +38,7 @@ export async function createI18nextServerInstance(
       .use(initReactI18next) // Tell our instance to use react-i18next
       .use(Backend) // Setup our backend
       .init({
-          ...i18n, // spread the configuration
+          ...config, // spread the configuration
           lng: await i18nextServer.getLocale(request), // detect locale from the request
           ns: i18nextServer.getRouteNamespaces(remixContext), // detect what namespaces the routes about to render want to use
           backend: {
